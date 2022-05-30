@@ -1,9 +1,9 @@
 package main
 
 import (
+	"catalina/scrape"
 	"log"
 	"os"
-	"catalina/scrape"
 )
 
 func main() {

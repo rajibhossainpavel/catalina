@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"unicode"
+	"time"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -50,6 +51,30 @@ func GetData(path string) {
 
 	// Find the review items
 	fmt.Printf("Processing Data:")
+	doc.Find("h2").Each(func(i int, s *goquery.Selection) {
+		targetString:=strings.ToLower(s.Text());
+		if strings.Contains(targetString, "latest share price") {
+			fmt.Println(targetString)
+			targetString=strings.ReplaceAll(targetString, "latest share price", "");
+			fmt.Println(targetString)
+			targetString=strings.ReplaceAll(targetString, "on", "");
+			fmt.Println(targetString)
+			targetString=strings.ReplaceAll(targetString, "at", "");
+			fmt.Println(targetString)
+			targetString=strings.ReplaceAll(targetString, "pm", "");
+			fmt.Println(targetString)
+			targetString=strings.TrimSpace(targetString);
+			fmt.Println(targetString)
+			date, error := time.Parse("2006-01-02", targetString)
+  
+			if error != nil {
+				fmt.Println(error)
+				return
+			}
+			fmt.Println(date)
+		}
+	});
+	
 	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
 		writableString := "\n"
 		s.Find("td").Each(func(i int, s *goquery.Selection) {
