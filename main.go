@@ -41,14 +41,14 @@ func GetData(path string) {
 	}
 
 	// Find the review items
-
+	fmt.Printf("Processing Data:")
 	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
 		writableString := "\n"
 		s.Find("td").Each(func(i int, s *goquery.Selection) {
 			writableString = writableString + "," + s.Text()
 
 		})
-		fmt.Printf("Review %d: %s\n", i, writableString)
+		//fmt.Printf("Review %d: %s\n", i, writableString)
 		_, err := writeBuffer.WriteString(writableString)
 		check(err)
 
@@ -123,13 +123,26 @@ func WriteNewFile(sourcePath string, destinationPath string, searchString string
 	if err := scanner.Err(); err != nil {
 		// Handle the error
 	}
+
 	return true
 }
 func main() {
-	GetData("dse-raw-data.txt")
-	GetNewFile("dse-raw-data.txt", "dse-raw-new-data.txt", "Helpdesk for NRB")
-	GetNewFile("dse-raw-new-data.txt", "dse-raw-new-2-data-.txt", "1JANATAMF")
-	WriteNewFile("dse-raw-new-2-data-.txt", "dse-raw-new-3-data-.txt", "If YCP is available")
+	GetData("data-1.txt")
+	GetNewFile("data-1.txt", "data-2.txt", "Helpdesk for NRB")
+	GetNewFile("data-2.txt", "data-3.txt", "1JANATAMF")
+	WriteNewFile("data-3.txt", "data-4.txt", "If YCP is available")
 	//fmt.Println("%b", success)
+	e := os.Remove("data-1.txt")
+	if e != nil {
+		log.Fatal(e)
+	}
+	e = os.Remove("data-2.txt")
+	if e != nil {
+		log.Fatal(e)
+	}
+	e = os.Remove("data-3.txt")
+	if e != nil {
+		log.Fatal(e)
+	}
 
 }
