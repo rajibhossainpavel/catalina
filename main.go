@@ -127,20 +127,12 @@ func WriteNewFile(sourcePath string, destinationPath string, searchString string
 	return true
 }
 func main() {
-	GetData("data-1.txt")
-	GetNewFile("data-1.txt", "data-2.txt", "Helpdesk for NRB")
-	GetNewFile("data-2.txt", "data-3.txt", "1JANATAMF")
-	WriteNewFile("data-3.txt", "data-4.txt", "If YCP is available")
+	GetData("data/data-1.txt")
+	GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
+	GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
+	WriteNewFile("data/data-3.txt", "data-4.txt", "If YCP is available")
 	//fmt.Println("%b", success)
-	e := os.Remove("data-1.txt")
-	if e != nil {
-		log.Fatal(e)
-	}
-	e = os.Remove("data-2.txt")
-	if e != nil {
-		log.Fatal(e)
-	}
-	e = os.Remove("data-3.txt")
+	e := os.RemoveAll("data")
 	if e != nil {
 		log.Fatal(e)
 	}
