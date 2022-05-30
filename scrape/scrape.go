@@ -2,12 +2,10 @@ package scrape
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-	"time"
 	"unicode"
 
 	"github.com/PuerkitoBio/goquery"
@@ -27,7 +25,7 @@ func IsLetter(s string) bool {
 	return false
 }
 
-func GetDate() {
+func GetDate() string {
 	// Request the HTML page.
 	res, err := http.Get("https://dsebd.org/latest_share_price_scroll_l.php")
 	if err != nil {
@@ -46,9 +44,10 @@ func GetDate() {
 	}
 
 	// Find the review items
+	targetDate := ""
 
 	doc.Find("h2").Each(func(i int, s *goquery.Selection) {
-		targetDate := strings.ToLower(s.Text())
+		targetDate = strings.ToLower(s.Text())
 		if strings.Contains(targetDate, "latest share price") {
 			targetDate = strings.ReplaceAll(targetDate, "latest share price", "")
 			targetDate = strings.ReplaceAll(targetDate, "on", "")
@@ -57,25 +56,13 @@ func GetDate() {
 			targetDate = strings.TrimSpace(targetDate)
 			targetDate = strings.Title(targetDate)
 			targetDate = strings.ReplaceAll(targetDate, "At", "at")
-			targetDate = strings.ReplaceAll(targetDate, "Pm", "pm")
-			fmt.Println(targetDate)
-			//explodedDate := strings.Split(targetDate, ",")
+			targetDate = strings.ReplaceAll(targetDate, " Pm", "pm")
 
-			//explodedDate = explodedDate[:len(explodedDate)-1]
-			//monthDate := strings.Join(explodedDate, "")
-			//monthDate = monthDate + ", 2022"
-			//fmt.Println(monthDate)
-
-			date, error := time.Parse(targetDate, targetDate)
-
-			if error != nil {
-				fmt.Println(error)
-				return
-			}
-			fmt.Println(date)
 		}
 	})
+	return targetDate
 }
+
 func GetData(path string) {
 	handle, err := os.Create(path)
 	check(err)
@@ -97,7 +84,6 @@ func GetData(path string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Processing Data:")
 	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
 		writableString := "\n"
 		s.Find("td").Each(func(i int, s *goquery.Selection) {
