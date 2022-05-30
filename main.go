@@ -127,6 +127,9 @@ func WriteNewFile(sourcePath string, destinationPath string, searchString string
 	return true
 }
 func main() {
+	if err := os.Mkdir("data", os.ModePerm); err != nil {
+        log.Fatal(err)
+    }
 	GetData("data/data-1.txt")
 	GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
 	GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
