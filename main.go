@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
+	"unicode"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -15,6 +15,14 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+func IsLetter(s string) bool {
+    for _, r := range s {
+        if unicode.IsLetter(r) {
+            return true
+        }
+    }
+    return false
 }
 
 func GetData(path string) {
@@ -126,6 +134,45 @@ func WriteNewFile(sourcePath string, destinationPath string, searchString string
 
 	return true
 }
+
+func WriteCSVFile(sourcePath string, destinationPath string) bool {
+
+	sourceHandle, err := os.Open(sourcePath)
+	if err != nil {
+		//
+	}
+
+	destinationHandle, err := os.Create(destinationPath)
+	check(err)
+	writableBuffer := bufio.NewWriter(destinationHandle)
+
+	defer sourceHandle.Close()
+	defer destinationHandle.Close()
+	scanner := bufio.NewScanner(sourceHandle)
+
+	line := 1
+	name:="";
+	for scanner.Scan() {
+		
+		text:=strings.TrimSpace(scanner.Text());
+		if strings.HasSuffix(text, ",") {
+			name="";
+		}else if IsLetter(text){
+			name=text
+		}else{
+			_, err := writableBuffer.WriteString(name+text+ "\n")
+			check(err)
+		}
+		line++
+	}
+	writableBuffer.Flush()
+
+	if err := scanner.Err(); err != nil {
+		// Handle the error
+	}
+
+	return true
+}
 func main() {
 	if err := os.Mkdir("data", os.ModePerm); err != nil {
         log.Fatal(err)
@@ -133,8 +180,9 @@ func main() {
 	GetData("data/data-1.txt")
 	GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
 	GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
-	WriteNewFile("data/data-3.txt", "data-4.txt", "If YCP is available")
-	//fmt.Println("%b", success)
+	WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
+	WriteCSVFile("data/data-4.txt", "data.csv")
+	
 	e := os.RemoveAll("data")
 	if e != nil {
 		log.Fatal(e)
