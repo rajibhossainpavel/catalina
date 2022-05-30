@@ -1,4 +1,4 @@
-module dse-chart
+module catalina
 
 go 1.18
 
