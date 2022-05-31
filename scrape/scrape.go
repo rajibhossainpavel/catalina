@@ -109,12 +109,9 @@ func GetDate() (string, error) {
 			dateString += date
 
 			targetDate = dateString
-
 		}
 	})
-
 	return targetDate, nil
-
 }
 
 func GetData(path string) (bool, error) {
@@ -154,7 +151,6 @@ func GetData(path string) (bool, error) {
 }
 
 func GetNewFile(sourcePath string, destinationPath string, searchString string) (bool, error) {
-
 	sourceHandle, err := os.Open(sourcePath)
 	if err != nil {
 		return false, err
@@ -190,8 +186,8 @@ func GetNewFile(sourcePath string, destinationPath string, searchString string) 
 	}
 	return success, nil
 }
-func WriteNewFile(sourcePath string, destinationPath string, searchString string) (bool, error) {
 
+func WriteNewFile(sourcePath string, destinationPath string, searchString string) (bool, error) {
 	sourceHandle, err := os.Open(sourcePath)
 	if err != nil {
 		return false, err
@@ -220,12 +216,10 @@ func WriteNewFile(sourcePath string, destinationPath string, searchString string
 	if err := scanner.Err(); err != nil {
 		return false, err
 	}
-
 	return true, nil
 }
 
 func WriteCSVFile(sourcePath string, destinationPath string) (bool, error) {
-
 	sourceHandle, err := os.Open(sourcePath)
 	if err != nil {
 		return false, err
@@ -259,6 +253,5 @@ func WriteCSVFile(sourcePath string, destinationPath string) (bool, error) {
 	if err := scanner.Err(); err != nil {
 		return false, err
 	}
-
 	return true, nil
 }

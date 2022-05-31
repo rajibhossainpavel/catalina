@@ -69,7 +69,6 @@ func CreateDir(path string) (bool, error) {
 		}
 	}
 	return true, nil
-
 }
 
 func main() {
