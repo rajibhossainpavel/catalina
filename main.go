@@ -68,7 +68,6 @@ func ParseData() (bool, error) {
 			newFile, err := scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
 			if err == nil {
 				if newFile {
-
 					newFile2, err := scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
 					if err == nil {
 						if newFile2 {
@@ -79,19 +78,14 @@ func ParseData() (bool, error) {
 									if err == nil {
 										if newFile4 {
 											return true, nil
-
 										}
 									}
-
 								}
 							}
-
 						}
 					}
-
 				}
 			}
-
 		}
 	}
 	return true, nil
