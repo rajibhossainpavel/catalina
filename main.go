@@ -52,11 +52,25 @@ func ParseData() (bool, error) {
 	}
 	if today == tradeDate {
 		fmt.Printf("Processing Data.\n")
-		scrape.GetData("data/data-1.txt")
-		scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
-		scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
-		scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
-		scrape.WriteCSVFile("data/data-4.txt", "data.csv")
+		dataRunCondition := true
+		dataSucess := false
+		for {
+			dataSucess, err := scrape.GetData("data/data-1.txt")
+			if err == nil {
+				if dataSucess == true {
+					dataRunCondition = false
+				}
+			}
+			if !dataRunCondition {
+				break
+			}
+		}
+		if dataSucess {
+			scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
+			scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
+			scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
+			scrape.WriteCSVFile("data/data-4.txt", "data.csv")
+		}
 	}
 	return true, nil
 }
