@@ -16,6 +16,7 @@ func check(e error) {
 		panic(e)
 	}
 }
+
 func IsLetter(s string) bool {
 	for _, r := range s {
 		if unicode.IsLetter(r) {
@@ -51,16 +52,69 @@ func GetDate() string {
 		if strings.Contains(targetDate, "latest share price") {
 			targetDate = strings.ReplaceAll(targetDate, "latest share price", "")
 			targetDate = strings.ReplaceAll(targetDate, "on", "")
-			//
-			//
 			targetDate = strings.TrimSpace(targetDate)
 			targetDate = strings.Title(targetDate)
 			targetDate = strings.ReplaceAll(targetDate, "At", "at")
 			targetDate = strings.ReplaceAll(targetDate, " Pm", "pm")
+			explodedDate := strings.Split(targetDate, "at")
+			targetDate = strings.TrimSpace(explodedDate[0])
+			explodedDate = strings.Split(targetDate, ",")
+			dateString := strings.TrimSpace(explodedDate[len(explodedDate)-1])
+			dateString += "-"
+			monthDate := strings.TrimSpace(explodedDate[0])
+			explodedDate = strings.Split(monthDate, " ")
+			month := strings.TrimSpace(explodedDate[0])
+			switch month {
+			case "Jan":
+				month = "01"
+				break
+			case "Feb":
+				month = "02"
+				break
+			case "Mar":
+				month = "03"
+				break
+			case "Apr":
+				month = "04"
+				break
+			case "May":
+				month = "05"
+				break
+			case "Jun":
+				month = "06"
+				break
+			case "Jul":
+				month = "07"
+				break
+			case "Aug":
+				month = "08"
+				break
+			case "Sep":
+				month = "09"
+				break
+			case "Oct":
+				month = "10"
+				break
+			case "Nov":
+				month = "11"
+				break
+			case "Dec":
+				month = "11"
+				break
+
+			}
+			dateString += month
+			dateString += "-"
+			date := strings.TrimSpace(explodedDate[len(explodedDate)-1])
+			dateString += date
+
+			targetDate = dateString
 
 		}
 	})
+
 	return targetDate
+
 }
 
 func GetData(path string) {
@@ -206,19 +260,4 @@ func WriteCSVFile(sourcePath string, destinationPath string) bool {
 	}
 
 	return true
-}
-func main() {
-	if err := os.Mkdir("data", os.ModePerm); err != nil {
-		log.Fatal(err)
-	}
-	GetData("data/data-1.txt")
-	GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
-	GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
-	WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
-	WriteCSVFile("data/data-4.txt", "data.csv")
-
-	e := os.RemoveAll("data")
-	if e != nil {
-		log.Fatal(e)
-	}
 }
