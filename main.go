@@ -3,7 +3,6 @@ package main
 import (
 	"catalina/scrape"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -50,7 +49,7 @@ func ParseData() (bool, error) {
 			break
 		}
 	}
-	if today == tradeDate {
+	if today != tradeDate {
 		fmt.Printf("Processing Data.\n")
 		dataRunCondition := true
 		dataSucess := false
@@ -66,10 +65,33 @@ func ParseData() (bool, error) {
 			}
 		}
 		if dataSucess {
-			scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
-			scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
-			scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
-			scrape.WriteCSVFile("data/data-4.txt", "data.csv")
+			newFile, err := scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
+			if err == nil {
+				if newFile {
+
+					newFile2, err := scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
+					if err == nil {
+						if newFile2 {
+							newFile3, err := scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
+							if err == nil {
+								if newFile3 {
+									newFile4, err := scrape.WriteCSVFile("data/data-4.txt", "data.csv")
+									if err == nil {
+										if newFile4 {
+											return true, nil
+
+										}
+									}
+
+								}
+							}
+
+						}
+					}
+
+				}
+			}
+
 		}
 	}
 	return true, nil
@@ -92,10 +114,10 @@ func main() {
 			success, err := ParseData()
 			if err == nil {
 				if success {
-					e := os.RemoveAll("data")
+					/*e := os.RemoveAll("data")
 					if e != nil {
 						log.Fatal(e)
-					}
+					}*/
 				}
 
 			}
