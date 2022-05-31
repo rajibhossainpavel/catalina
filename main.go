@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -18,7 +19,23 @@ func exists(path string) (bool, error) {
 	return false, err
 }
 
+func GetToday() (string, error) {
+	t := time.Now()
+	location, err := time.LoadLocation("Asia/Dhaka")
+	if err != nil {
+		return "", nil
+	}
+	now := t.In(location).Format(time.RFC3339)
+	explodedDate := strings.Split(now, "T")
+	dateString := strings.TrimSpace(explodedDate[0])
+	return dateString, nil
+}
+
 func main() {
+	today, err := GetToday()
+	if err == nil {
+		fmt.Println(today)
+	}
 	dirERxists, _ := exists("data")
 	if !dirERxists {
 		if err := os.Mkdir("data", os.ModePerm); err != nil {
@@ -37,14 +54,5 @@ func main() {
 	if e != nil {
 		log.Fatal(e)
 	}
-	t := time.Now()
 
-	// print location and local time
-	location, err := time.LoadLocation("Asia/Dhaka")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	// America/New_York
-	fmt.Println("Location : ", location, " Time : ", t.In(location))
 }
