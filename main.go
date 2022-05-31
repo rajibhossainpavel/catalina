@@ -36,7 +36,6 @@ func ParseData() (bool, error) {
 	today, err := GetToday()
 	if err != nil {
 		return false, err
-
 	}
 	runCondition := true
 	tradeDate := ""
@@ -47,7 +46,6 @@ func ParseData() (bool, error) {
 				runCondition = false
 			}
 		}
-
 		if !runCondition {
 			break
 		}
@@ -62,6 +60,7 @@ func ParseData() (bool, error) {
 	}
 	return true, nil
 }
+
 func CreateDir(path string) (bool, error) {
 	dirERxists, _ := exists(path)
 	if !dirERxists {
@@ -72,8 +71,8 @@ func CreateDir(path string) (bool, error) {
 	return true, nil
 
 }
-func main() {
 
+func main() {
 	dirSuccess, err := CreateDir("data")
 	if err == nil {
 		if dirSuccess {
