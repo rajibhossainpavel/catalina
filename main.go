@@ -1,10 +1,10 @@
 package main
 
 import (
-	"catalina/scrape"
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 func exists(path string) (bool, error) {
@@ -31,10 +31,20 @@ func main() {
 	//scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
 	//scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
 	//scrape.WriteCSVFile("data/data-4.txt", "data.csv")
-	tradeDate := scrape.GetDate()
-	fmt.Println(tradeDate)
+	//tradeDate := scrape.GetDate()
+	//fmt.Println(tradeDate)
 	e := os.RemoveAll("data")
 	if e != nil {
 		log.Fatal(e)
 	}
+	t := time.Now()
+
+	// print location and local time
+	location, err := time.LoadLocation("Asia/Dhaka")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// America/New_York
+	fmt.Println("Location : ", location, " Time : ", t.In(location))
 }

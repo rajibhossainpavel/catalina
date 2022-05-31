@@ -2,7 +2,6 @@ package scrape
 
 import (
 	"bufio"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -26,22 +25,23 @@ func IsLetter(s string) bool {
 	return false
 }
 
-func GetDate() string {
+func GetDate() (string, error) {
 	// Request the HTML page.
 	res, err := http.Get("https://dsebd.org/latest_share_price_scroll_l.php")
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+
+		return "", nil
 	}
 
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		return "", nil
 	}
 
 	// Find the review items
@@ -113,11 +113,11 @@ func GetDate() string {
 		}
 	})
 
-	return targetDate
+	return targetDate, nil
 
 }
 
-func GetData(path string) {
+func GetData(path string) (bool, error) {
 	handle, err := os.Create(path)
 	check(err)
 	writeBuffer := bufio.NewWriter(handle)
@@ -125,18 +125,18 @@ func GetData(path string) {
 	// Request the HTML page.
 	res, err := http.Get("https://dsebd.org/latest_share_price_scroll_l.php")
 	if err != nil {
-		log.Fatal(err)
+		return false, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+		return false, nil
 	}
 
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		return false, err
 	}
 	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
 		writableString := "\n"
@@ -150,13 +150,14 @@ func GetData(path string) {
 
 	})
 	writeBuffer.Flush()
+	return true, nil
 }
 
-func GetNewFile(sourcePath string, destinationPath string, searchString string) bool {
+func GetNewFile(sourcePath string, destinationPath string, searchString string) (bool, error) {
 
 	sourceHandle, err := os.Open(sourcePath)
 	if err != nil {
-		//
+		return false, err
 	}
 
 	destinationHandle, err := os.Create(destinationPath)
@@ -185,15 +186,15 @@ func GetNewFile(sourcePath string, destinationPath string, searchString string) 
 	writableBuffer.Flush()
 
 	if err := scanner.Err(); err != nil {
-		// Handle the error
+		return false, err
 	}
-	return success
+	return success, nil
 }
-func WriteNewFile(sourcePath string, destinationPath string, searchString string) bool {
+func WriteNewFile(sourcePath string, destinationPath string, searchString string) (bool, error) {
 
 	sourceHandle, err := os.Open(sourcePath)
 	if err != nil {
-		//
+		return false, err
 	}
 
 	destinationHandle, err := os.Create(destinationPath)
@@ -217,17 +218,17 @@ func WriteNewFile(sourcePath string, destinationPath string, searchString string
 	writableBuffer.Flush()
 
 	if err := scanner.Err(); err != nil {
-		// Handle the error
+		return false, err
 	}
 
-	return true
+	return true, nil
 }
 
-func WriteCSVFile(sourcePath string, destinationPath string) bool {
+func WriteCSVFile(sourcePath string, destinationPath string) (bool, error) {
 
 	sourceHandle, err := os.Open(sourcePath)
 	if err != nil {
-		//
+		return false, err
 	}
 
 	destinationHandle, err := os.Create(destinationPath)
@@ -256,8 +257,8 @@ func WriteCSVFile(sourcePath string, destinationPath string) bool {
 	writableBuffer.Flush()
 
 	if err := scanner.Err(); err != nil {
-		// Handle the error
+		return false, err
 	}
 
-	return true
+	return true, nil
 }
