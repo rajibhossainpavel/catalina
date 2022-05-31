@@ -49,7 +49,7 @@ func ParseData() (bool, error) {
 			break
 		}
 	}
-	if today != tradeDate {
+	if today == tradeDate {
 		fmt.Printf("Processing Data.\n")
 		dataRunCondition := true
 		dataSucess := false
