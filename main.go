@@ -1,6 +1,7 @@
 package main
 
 import (
+	"catalina/scrape"
 	"fmt"
 	"log"
 	"os"
@@ -31,28 +32,61 @@ func GetToday() (string, error) {
 	return dateString, nil
 }
 
-func main() {
+func ParseData() (bool, error) {
 	today, err := GetToday()
-	if err == nil {
-		fmt.Println(today)
+	if err != nil {
+		return false, err
+
 	}
-	dirERxists, _ := exists("data")
-	if !dirERxists {
-		if err := os.Mkdir("data", os.ModePerm); err != nil {
-			log.Fatal(err)
+	runCondition := true
+	tradeDate := ""
+	for {
+		tradeDate, err := scrape.GetDate()
+		if err == nil {
+			if tradeDate != "" {
+				runCondition = false
+			}
+		}
+
+		if !runCondition {
+			break
 		}
 	}
-	fmt.Printf("Processing Data.\n")
-	//scrape.GetData("data/data-1.txt")
-	//scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
-	//scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
-	//scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
-	//scrape.WriteCSVFile("data/data-4.txt", "data.csv")
-	//tradeDate := scrape.GetDate()
-	//fmt.Println(tradeDate)
-	e := os.RemoveAll("data")
-	if e != nil {
-		log.Fatal(e)
+	if today == tradeDate {
+		fmt.Printf("Processing Data.\n")
+		scrape.GetData("data/data-1.txt")
+		scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
+		scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
+		scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
+		scrape.WriteCSVFile("data/data-4.txt", "data.csv")
 	}
+	return true, nil
+}
+func CreateDir(path string) (bool, error) {
+	dirERxists, _ := exists(path)
+	if !dirERxists {
+		if err := os.Mkdir(path, os.ModePerm); err != nil {
+			return false, err
+		}
+	}
+	return true, nil
 
+}
+func main() {
+
+	dirSuccess, err := CreateDir("data")
+	if err == nil {
+		if dirSuccess {
+			success, err := ParseData()
+			if err == nil {
+				if success {
+					e := os.RemoveAll("data")
+					if e != nil {
+						log.Fatal(e)
+					}
+				}
+
+			}
+		}
+	}
 }
