@@ -25,24 +25,31 @@ func IsLetter(s string) bool {
 	return false
 }
 
-func GetDate() (string, error) {
+func GetDocument(url string) (*goquery.Document, error) {
 	// Request the HTML page.
-	res, err := http.Get("https://dsebd.org/latest_share_price_scroll_l.php")
+	//res, err := http.Get("https://dsebd.org/latest_share_price_scroll_l.php")
+	res, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
 
-		return "", nil
+		return nil, nil
 	}
 
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return "", nil
+		return nil, err
+	} else {
+		return doc, nil
 	}
+
+}
+
+func GetDate(doc *goquery.Document) (string, error) {
 
 	// Find the review items
 	targetDate := ""
@@ -114,27 +121,12 @@ func GetDate() (string, error) {
 	return targetDate, nil
 }
 
-func GetData(path string) (bool, error) {
+func GetData(doc *goquery.Document, path string) (bool, error) {
 	handle, err := os.Create(path)
 	check(err)
 	writeBuffer := bufio.NewWriter(handle)
 	defer handle.Close()
-	// Request the HTML page.
-	res, err := http.Get("https://dsebd.org/latest_share_price_scroll_l.php")
-	if err != nil {
-		return false, err
-	}
-	defer res.Body.Close()
 
-	if res.StatusCode != 200 {
-		return false, nil
-	}
-
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		return false, err
-	}
 	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
 		writableString := "\n"
 		s.Find("td").Each(func(i int, s *goquery.Selection) {

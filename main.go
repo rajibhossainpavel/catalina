@@ -2,10 +2,12 @@ package main
 
 import (
 	"catalina/scrape"
-	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func exists(path string) (bool, error) {
@@ -31,66 +33,6 @@ func GetToday() (string, error) {
 	return dateString, nil
 }
 
-func ParseData() (bool, error) {
-	today, err := GetToday()
-	if err != nil {
-		return false, err
-	}
-	runCondition := true
-	tradeDate := ""
-	for {
-		tradeDate, err := scrape.GetDate()
-		if err == nil {
-			if tradeDate != "" {
-				runCondition = false
-			}
-		}
-		if !runCondition {
-			break
-		}
-	}
-	if today == tradeDate {
-		fmt.Printf("Processing Data.\n")
-		dataRunCondition := true
-		dataSucess := false
-		for {
-			dataSucess, err := scrape.GetData("data/data-1.txt")
-			if err == nil {
-				if dataSucess == true {
-					dataRunCondition = false
-				}
-			}
-			if !dataRunCondition {
-				break
-			}
-		}
-		if dataSucess {
-			newFile, err := scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
-			if err == nil {
-				if newFile {
-					newFile2, err := scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
-					if err == nil {
-						if newFile2 {
-							newFile3, err := scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
-							if err == nil {
-								if newFile3 {
-									newFile4, err := scrape.WriteCSVFile("data/data-4.txt", "data.csv")
-									if err == nil {
-										if newFile4 {
-											return true, nil
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return true, nil
-}
-
 func CreateDir(path string) (bool, error) {
 	dirERxists, _ := exists(path)
 	if !dirERxists {
@@ -101,19 +43,56 @@ func CreateDir(path string) (bool, error) {
 	return true, nil
 }
 
-func main() {
-	dirSuccess, err := CreateDir("data")
-	if err == nil {
-		if dirSuccess {
-			success, err := ParseData()
-			if err == nil {
-				if success {
-					/*e := os.RemoveAll("data")
-					if e != nil {
-						log.Fatal(e)
-					}*/
-				}
+func ParseData(url string) (bool, error) {
+	var doc *goquery.Document
+	doc = nil
+	runCondition := true
+	for {
+		doc, _ = scrape.GetDocument(url)
+		if doc != nil {
+			runCondition = false
+		}
+		if !runCondition {
+			break
+		}
+	}
 
+	if doc != nil {
+		tradeDate, _ := scrape.GetDate(doc)
+		today, _ := GetToday()
+		if today != "" && tradeDate == today {
+			result, _ := scrape.GetData(doc, "data/data-1.txt")
+			if result {
+				if result {
+					result, _ = scrape.GetNewFile("data/data-1.txt", "data/data-2.txt", "Helpdesk for NRB")
+					if result {
+						result, _ = scrape.GetNewFile("data/data-2.txt", "data/data-3.txt", "1JANATAMF")
+						if result {
+							result, _ = scrape.WriteNewFile("data/data-3.txt", "data/data-4.txt", "If YCP is available")
+							if result {
+								result, _ = scrape.WriteCSVFile("data/data-4.txt", "data.csv")
+								if result {
+									return true, nil
+
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return false, nil
+}
+
+func main() {
+	dirSuccess, _ := CreateDir("data")
+	if dirSuccess {
+		result, _ := ParseData("https://dsebd.org/latest_share_price_scroll_l.php")
+		if result {
+			e := os.RemoveAll("data")
+			if e != nil {
+				log.Fatal(e)
 			}
 		}
 	}
