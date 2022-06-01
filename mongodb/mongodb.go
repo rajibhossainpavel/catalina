@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -28,7 +29,16 @@ func Connect() (bool, error) {
 	} else {
 		fmt.Println("Connected")
 		usersCollection := client.Database("catalina").Collection("catalina")
-		fmt.Println(usersCollection)
+
+		user := bson.D{{"fullName", "User 1"}, {"age", 30}}
+		// insert the bson object using InsertOne()
+		result, err := usersCollection.InsertOne(context.TODO(), user)
+		// check for errors in the insertion
+		if err != nil {
+			panic(err)
+		}
+		// display the id of the newly inserted object
+		fmt.Println(result.InsertedID)
 	}
 	return true, nil
 }
