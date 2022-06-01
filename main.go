@@ -1,6 +1,7 @@
 package main
 
 import (
+	"catalina/mongodb"
 	"catalina/scrape"
 	"log"
 	"os"
@@ -93,6 +94,9 @@ func main() {
 			e := os.RemoveAll("data")
 			if e != nil {
 				log.Fatal(e)
+			} else {
+				mongodb.Connect()
+
 			}
 		}
 	}
