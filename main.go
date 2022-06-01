@@ -3,7 +3,6 @@ package main
 import (
 	"catalina/mongodb"
 	"catalina/scrape"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -87,7 +86,7 @@ func ParseData(url string) (bool, error) {
 }
 
 func main() {
-	dirSuccess, _ := CreateDir("data")
+	/*dirSuccess, _ := CreateDir("data")
 	if dirSuccess {
 		result, _ := ParseData("https://dsebd.org/latest_share_price_scroll_l.php")
 		if result {
@@ -95,9 +94,10 @@ func main() {
 			if e != nil {
 				log.Fatal(e)
 			} else {
-				mongodb.Connect()
+
 
 			}
 		}
-	}
+	}*/
+	mongodb.Connect()
 }
